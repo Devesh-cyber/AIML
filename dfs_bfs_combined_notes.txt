@@ -1,0 +1,163 @@
+PRACTICAL: UNINFORMED SEARCH ALGORITHMS
+DFS AND BFS
+
+AIM
+Write Python programs to implement the uninformed search algorithms:
+a. Depth First Search (DFS)
+b. Breadth First Search (BFS)
+
+PROBLEM
+Use the following graph and start traversal from node A:
+
+       A
+      / \
+     B   C
+    / \ / \
+   D  E F  G
+
+Graph representation:
+A -> B, C
+B -> D, E
+C -> F, G
+D -> None
+E -> None
+F -> None
+G -> None
+
+--------------------------------------------------
+A. DEPTH FIRST SEARCH (DFS)
+--------------------------------------------------
+
+PROGRAM
+
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': []
+}
+
+visited = set()
+
+def dfs(node):
+    if node not in visited:
+        print(node, end=" ")
+        visited.add(node)
+
+        for neighbour in graph[node]:
+            dfs(neighbour)
+
+print("DFS Traversal:")
+dfs('A')
+
+OUTPUT
+DFS Traversal:
+A B D E C F G
+
+EXPLANATION
+1. The graph dictionary stores each node and its neighbouring nodes.
+2. The visited set stores nodes that have already been visited.
+3. The dfs(node) function receives the current node.
+4. If the node has not been visited, it is printed and added to visited.
+5. The for loop calls DFS recursively for each neighbour.
+6. When a branch ends, recursion returns to the previous node and explores another branch.
+
+DFS follows depth-first exploration and uses recursion (call stack).
+
+--------------------------------------------------
+B. BREADTH FIRST SEARCH (BFS)
+--------------------------------------------------
+
+PROGRAM
+
+from collections import deque
+
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': []
+}
+
+visited = set()
+queue = deque(['A'])
+
+print("BFS Traversal:")
+
+while queue:
+    node = queue.popleft()
+
+    if node not in visited:
+        print(node, end=" ")
+        visited.add(node)
+
+        for neighbour in graph[node]:
+            if neighbour not in visited:
+                queue.append(neighbour)
+
+OUTPUT
+BFS Traversal:
+A B C D E F G
+
+EXPLANATION
+1. The graph dictionary stores the graph connections.
+2. visited keeps track of already visited nodes.
+3. deque(['A']) creates a queue with A as the starting node.
+4. popleft() removes the first node from the queue.
+5. The node is printed and marked visited if it has not been visited.
+6. Its unvisited neighbours are added to the end of the queue.
+7. The loop continues until the queue becomes empty.
+
+BFS explores the graph level by level and uses a FIFO queue (First In, First Out).
+
+--------------------------------------------------
+DIFFERENCE BETWEEN DFS AND BFS
+--------------------------------------------------
+
+DFS:
+- Uses recursion or a stack.
+- Explores one branch deeply before backtracking.
+- Traversal for this graph: A B D E C F G.
+
+BFS:
+- Uses a queue.
+- Explores all nodes at one level before moving to the next.
+- Traversal for this graph: A B C D E F G.
+
+TIME COMPLEXITY
+For an adjacency-list graph, both DFS and BFS take O(V + E) time, where V is the number of vertices and E is the number of edges.
+
+VIVA QUESTIONS
+1. What is uninformed search?
+   It is a search method that does not use heuristic information to guide the search.
+
+2. What is DFS?
+   DFS explores one branch as deeply as possible before backtracking.
+
+3. What is BFS?
+   BFS explores nodes level by level.
+
+4. Which data structure is used in DFS?
+   A stack or recursion.
+
+5. Which data structure is used in BFS?
+   A queue.
+
+6. Why is visited used?
+   To avoid processing the same node repeatedly and to prevent infinite loops in cyclic graphs.
+
+7. What does FIFO mean?
+   First In, First Out.
+
+8. Do these programs stop when a goal is found?
+   No. They traverse all nodes reachable from A. A goal test can be added for goal-based search.
+
+QUICK REVISION
+DFS = Recursion / Stack = Go deep, then backtrack.
+BFS = Queue = Visit level by level.

@@ -1,0 +1,267 @@
+AIML PRACTICAL NOTES
+8-Puzzle Problem — State-Space Generation using BFS
+
+1. AIM
+To generate the reachable states of the 8-Puzzle problem using Breadth-First Search (BFS).
+
+The puzzle has a 3×3 grid containing tiles numbered 1 to 8 and one blank space represented by 0. A state is one arrangement of these nine positions.
+
+2. INITIAL STATE
+Example:
+(1, 0, 2,
+ 3, 4, 5,
+ 6, 7, 8)
+
+The puzzle is stored as a one-dimensional tuple of 9 elements. The indices range from 0 to 8.
+
+3. STATE REPRESENTATION
+Index layout:
+0 1 2
+3 4 5
+6 7 8
+
+If the blank is at index 4:
+row = 4 // 3 = 1
+col = 4 % 3 = 1
+
+Rows and columns are zero-based.
+
+4. POSSIBLE MOVEMENTS
+The blank tile can move:
+- Up: index - 3
+- Down: index + 3
+- Left: index - 1
+- Right: index + 1
+
+In code:
+moves = [-3, 3, -1, 1]
+
+These are candidate movements. Each must be checked before applying it.
+
+5. VALIDATING MOVES
+Check whether the new index is inside the grid:
+if new_pos < 0 or new_pos > 8:
+    continue
+
+This rejects positions outside 0–8.
+
+Prevent moving left from the first column:
+if col == 0 and move == -1:
+    continue
+
+Prevent moving right from the last column:
+if col == 2 and move == 1:
+    continue
+
+These horizontal checks prevent invalid jumps between rows. A candidate index can be in the range 0–8 and still be an invalid horizontal move.
+
+6. GENERATING A NEW STATE
+After validating a move:
+1. Convert the tuple into a list.
+2. Swap the blank (0) with the adjacent tile.
+3. Convert the list back into a tuple.
+
+Example:
+Before: (1, 0, 2, 3, 4, 5, 6, 7, 8)
+Move blank right, swapping 0 and 2.
+After:  (1, 2, 0, 3, 4, 5, 6, 7, 8)
+
+Tuples can be stored in a set; lists cannot.
+
+7. BFS, QUEUE, AND VISITED
+BFS means Breadth-First Search. It explores states in discovery order using a FIFO queue.
+
+- queue: states waiting to be explored.
+- visited: states already processed.
+- popleft(): removes the first state.
+- visited.add(state): records a processed state.
+- queue.append(new_state): adds a state to the back of the queue.
+
+The visited set prevents repeated processing and cycles. A state can be queued more than once through different paths; the visited check after removal skips later duplicates.
+
+8. PYTHON CODE — GENERATE REACHABLE STATES
+
+from collections import deque
+
+start = (1, 0, 2,
+         3, 4, 5,
+         6, 7, 8)
+
+queue = deque([start])
+visited = set()
+
+moves = [-3, 3, -1, 1]
+
+while queue:
+    state = queue.popleft()
+
+    if state in visited:
+        continue
+
+    visited.add(state)
+    print(state)
+
+    zero = state.index(0)
+
+    row = zero // 3
+    col = zero % 3
+
+    for move in moves:
+        new_pos = zero + move
+
+        if new_pos < 0 or new_pos > 8:
+            continue
+
+        if col == 0 and move == -1:
+            continue
+
+        if col == 2 and move == 1:
+            continue
+
+        new_state = list(state)
+
+        new_state[zero], new_state[new_pos] = (
+            new_state[new_pos], new_state[zero]
+        )
+
+        new_state = tuple(new_state)
+
+        if new_state not in visited:
+            queue.append(new_state)
+
+print("Total reachable states:", len(visited))
+
+Note: Printing all states creates a very large output. For demonstration, print only a few states or count them.
+
+9. SAMPLE FIRST STATES
+For the initial state above, the first states in this move ordering begin:
+
+(1, 0, 2, 3, 4, 5, 6, 7, 8)
+(0, 1, 2, 3, 4, 5, 6, 7, 8)
+(1, 2, 0, 3, 4, 5, 6, 7, 8)
+(1, 4, 2, 3, 0, 5, 6, 7, 8)
+
+The complete exploration reaches 181,440 states for this standard solvable 8-puzzle arrangement.
+
+10. GOAL STATE VS STATE-SPACE GENERATION
+
+A. State-space generation:
+- Explores all states reachable from the initial state.
+- Does not require a goal variable.
+- Stops when the queue becomes empty.
+- Final count is len(visited).
+
+B. Goal-based solving:
+If asked to solve the puzzle, define a goal state, commonly:
+
+goal = (1, 2, 3,
+        4, 5, 6,
+        7, 8, 0)
+
+After removing a state from the queue and marking it visited, check:
+
+if state == goal:
+    print("Goal state reached!")
+    break
+
+This stops the search when the goal is found. To display the full solution path, store parent states and trace backward from the goal.
+
+11. PSEUDOCODE — STATE-SPACE GENERATION
+
+START
+
+Define the initial puzzle state
+Create a queue and insert the initial state
+Create an empty visited set
+Define the four possible movements
+
+WHILE queue is not empty:
+
+    Remove the first state from queue
+
+    IF state is already visited:
+        Continue
+
+    Add state to visited
+    Display state
+
+    Find the index of the blank tile
+    Calculate its row and column
+
+    FOR each possible movement:
+
+        Calculate the candidate new position
+
+        IF new position is outside indices 0 to 8:
+            Continue
+
+        IF moving left from first column:
+            Continue
+
+        IF moving right from last column:
+            Continue
+
+        Copy the current state
+        Swap blank with adjacent tile
+        Convert result into a tuple
+
+        IF new state is not visited:
+            Add new state to queue
+
+Display total number of visited states
+
+STOP
+
+12. VIVA QUESTIONS AND ANSWERS
+
+Q1. Which algorithm is used?
+Breadth-First Search (BFS).
+
+Q2. What does 0 represent?
+The blank space.
+
+Q3. How is a state represented?
+As a tuple containing the nine tile positions.
+
+Q4. What are the four possible moves?
+Up, down, left, and right.
+
+Q5. Why is -3 used for up?
+Moving one row up in a 3-column representation decreases the index by 3.
+
+Q6. Why are boundary checks required?
+To prevent movement outside the grid and invalid horizontal row wrapping.
+
+Q7. Why convert the tuple into a list?
+To swap tile values, because tuples are immutable.
+
+Q8. Why convert the list back into a tuple?
+So the state can be stored in the visited set.
+
+Q9. Why use a queue?
+BFS uses FIFO order, processing the earliest added state first.
+
+Q10. Why use visited?
+To avoid repeatedly processing the same state and cycling indefinitely.
+
+Q11. Does this program use a goal state?
+No. It generates all reachable states and stops when the queue is empty.
+
+Q12. What is the standard number of reachable arrangements?
+181,440 from a solvable initial arrangement. There are 9! = 362,880 total permutations, split into two solvability classes of equal size.
+
+13. QUICK REVISION
+- Problem: 8-Puzzle
+- State: arrangement of 8 tiles and blank
+- Blank representation: 0
+- Grid: 3×3
+- Indices: 0 to 8
+- Algorithm: BFS
+- Queue: deque
+- Duplicate prevention: visited set
+- Moves: -3, +3, -1, +1
+- Goal state: needed only for goal-based solving
+- State-space generation ends when queue is empty
+- Standard reachable states from a solvable start: 181,440
+
+END OF NOTES
