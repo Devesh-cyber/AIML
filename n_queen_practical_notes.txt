@@ -1,0 +1,178 @@
+N-QUEEN PROBLEM — COMPLETE PRACTICAL NOTES
+
+1. Aim
+To solve the N-Queen problem using Backtracking in Python.
+
+2. Problem Definition
+Place N queens on an N × N chessboard so that no two queens attack each other. No two queens may share a column or diagonal. This example uses N = 4.
+
+3. Simple Python Program
+
+N = 4
+board = [-1] * N
+
+def safe(row, col):
+    for i in range(row):
+        if board[i] == col or abs(board[i] - col) == abs(i - row):
+            return False
+    return True
+
+def solve(row):
+    if row == N:
+        for i in range(N):
+            print("." * board[i] + "Q" + "." * (N - board[i] - 1))
+        print()
+        return
+
+    for col in range(N):
+        if safe(row, col):
+            board[row] = col
+            solve(row + 1)
+            board[row] = -1
+
+solve(0)
+
+4. Expected Output
+
+.Q..
+...Q
+Q...
+..Q.
+
+..Q.
+Q...
+...Q
+.Q..
+
+5. Board Representation
+board = [-1] * N
+
+For N = 4, the initial board is [-1, -1, -1, -1].
+Each index represents a row; each value represents the queen's column in that row. -1 means no queen is placed in that row.
+
+Example: board = [1, 3, 0, 2]
+- Row 0, column 1
+- Row 1, column 3
+- Row 2, column 0
+- Row 3, column 2
+
+6. Code Explanation
+
+safe(row, col)
+Checks whether a queen can be placed at the given position without attacking earlier queens.
+
+for i in range(row)
+Checks rows where queens have already been placed.
+
+if board[i] == col
+Checks whether an earlier queen is in the same column. If yes, return False.
+
+if abs(board[i] - col) == abs(i - row)
+Checks whether the existing queen and proposed queen are on the same diagonal. If yes, return False.
+
+return True
+If no column or diagonal conflict is found, the position is safe.
+
+solve(row)
+Tries to place a queen in the current row.
+
+if row == N
+Base condition: all N queens have been placed. Print the board and return.
+
+for col in range(N)
+Try every column in the current row.
+
+if safe(row, col)
+Continue only if the position is safe.
+
+board[row] = col
+Place the queen by storing its column.
+
+solve(row + 1)
+Recursively move to the next row.
+
+board[row] = -1
+Backtracking step: remove the queen from this row so another column can be tried.
+
+solve(0)
+Starts the process from row 0.
+
+7. Dry Run — First Solution
+One valid arrangement is board = [1, 3, 0, 2].
+1. Row 0: place queen at column 1.
+2. Row 1: place queen at column 3.
+3. Row 2: place queen at column 0.
+4. Row 3: place queen at column 2.
+5. solve(4) reaches row == N, so the solution is printed.
+6. The program returns to earlier calls and resets placements to explore other possibilities.
+
+The 4-Queen problem has two distinct solutions.
+
+8. Why board[row] = -1?
+It undoes the current queen placement after exploring it. This lets the algorithm try another column. Without resetting, an old placement could remain while testing a different arrangement.
+
+Viva answer: “We set board[row] to -1 to remove the queen after exploring a placement, allowing the algorithm to try another column in that row.”
+
+9. Algorithm
+START
+Set N and initialize board with -1
+Call solve(0)
+
+In solve(row):
+    If row == N:
+        Print solution
+        Return
+    For each column:
+        If position is safe:
+            Place queen
+            Call solve(row + 1)
+            Remove queen (backtrack)
+
+In safe(row, col):
+    Check earlier rows for same column
+    Check earlier rows for diagonal conflict
+    If conflict exists, return False
+    Otherwise return True
+STOP
+
+10. Viva Questions and Answers
+
+Q1. What is the N-Queen problem?
+Placing N queens on an N × N board so no two queens attack each other.
+
+Q2. Which algorithm is used?
+Backtracking.
+
+Q3. What is backtracking?
+Making a choice, exploring it, and undoing it when needed to try another choice.
+
+Q4. What does safe() check?
+Same-column and diagonal conflicts with earlier queens.
+
+Q5. Why place queens row by row?
+It ensures one queen per row and reduces unnecessary checks.
+
+Q6. What is the base condition?
+row == N, meaning all queens have been placed.
+
+Q7. Why use board[row] = -1?
+To undo a placement during backtracking.
+
+Q8. How many solutions exist for 4-Queen?
+Two distinct solutions.
+
+Q9. What does abs() do?
+Returns the non-negative absolute value of a number.
+
+Q10. Why use recursion?
+To attempt placing a queen in the next row after a safe placement.
+
+11. Quick Revision
+- Board index = row
+- Board value = queen's column
+- -1 = no queen
+- safe() = checks column and diagonal
+- solve(row) = tries placements in a row
+- solve(row + 1) = move to next row
+- board[row] = -1 = undo placement
+- Backtracking = try, explore, undo, retry

@@ -1,0 +1,164 @@
+HILL CLIMBING ALGORITHM — PRACTICAL NOTES
+
+1. Aim
+To implement the Hill Climbing search algorithm in Python using a graph and heuristic values.
+
+2. Basic Idea
+Hill Climbing is a heuristic search algorithm. It examines the neighbouring nodes of the current node and chooses the neighbour with the smallest heuristic value.
+
+In this example:
+- A is the starting node.
+- G is the goal node.
+- A heuristic value h(n) estimates how far a node is from the goal.
+- A smaller heuristic value is treated as a better choice.
+
+Basic flow:
+1. Start at the current node.
+2. Check whether it is the goal.
+3. Get the current node's neighbours.
+4. Read the heuristic value of each neighbour.
+5. Select the neighbour with the minimum heuristic value.
+6. Make that neighbour the new current node.
+7. Repeat until the goal is reached or no move is possible.
+
+3. Python Program
+
+graph = {
+    'A': ['B', 'C'],
+    'B': [],
+    'C': ['G'],
+    'G': []
+}
+
+h = {
+    'A': 6,
+    'B': 5,
+    'C': 3,
+    'G': 0
+}
+
+current = 'A'
+goal = 'G'
+
+while current != goal:
+    print(current, end=' ')
+
+    neighbour = graph[current]
+
+    if not neighbour:
+        print("\nGoal not found!")
+        break
+
+    # Extract heuristic values of neighbours
+    values = [h[n] for n in neighbour]
+
+    # Find the minimum heuristic value
+    min_value = min(values)
+
+    # Find the node having that minimum value
+    next_node = neighbour[values.index(min_value)]
+
+    # Move to the selected node
+    current = next_node
+
+if current == goal:
+    print(goal)
+
+4. Expected Output
+
+A C G
+
+5. Explanation of Important Statements
+
+graph
+Stores each node and the nodes directly connected to it. For example, A has neighbours B and C.
+
+h
+Stores the heuristic value of each node. In this example, h(A)=6, h(B)=5, h(C)=3, and h(G)=0.
+
+current = 'A'
+Sets A as the starting node.
+
+while current != goal
+Repeats the search while the current node is not the goal.
+
+neighbour = graph[current]
+Gets the list of neighbours of the current node.
+
+if not neighbour
+Checks whether the current node has no neighbours. If it has none before reaching G, the search stops and reports that the goal was not found.
+
+values = [h[n] for n in neighbour]
+Gets the heuristic value of every neighbour. If the neighbours are ['B', 'C'], the values become [5, 3].
+
+min_value = min(values)
+Finds the smallest heuristic value. Here, the minimum is 3.
+
+next_node = neighbour[values.index(min_value)]
+Finds which neighbour has that minimum value. Since 3 is at index 1 in [5, 3], the selected neighbour is C at index 1 in ['B', 'C'].
+
+current = next_node
+Moves to the selected neighbour and starts the next loop iteration.
+
+6. Dry Run
+
+Initial:
+current = A
+neighbours of A = [B, C]
+heuristics = [5, 3]
+minimum = 3
+selected node = C
+
+Next:
+current = C
+neighbours of C = [G]
+heuristics = [0]
+minimum = 0
+selected node = G
+
+Now current equals goal, so the loop ends.
+
+Path: A → C → G
+
+7. Viva Questions and Answers
+
+Q1. What is Hill Climbing?
+Hill Climbing is a heuristic search technique that repeatedly moves from the current state to a neighbouring state that appears better according to a heuristic.
+
+Q2. What is a heuristic?
+A heuristic is an estimate used to guide the search toward the goal. Here, lower h(n) values are considered better.
+
+Q3. Why is h(G)=0?
+Because G is the goal, so the estimated remaining distance to the goal is zero.
+
+Q4. What does min(values) do?
+It returns the smallest heuristic value from the neighbours' heuristic values.
+
+Q5. Why do we use values.index(min_value)?
+It gives the position of the minimum heuristic value, allowing us to select the corresponding node from the neighbour list.
+
+Q6. What is a limitation of Hill Climbing?
+It can get stuck at a local optimum, plateau, or a node with no useful neighbour. It does not guarantee the shortest path or a solution in every problem.
+
+Q7. Is this program guaranteed to find the goal?
+No. It follows the locally smallest heuristic at each step. The example reaches G, but other graphs may lead to a dead end or a local optimum.
+
+Q8. What is the role of the graph?
+It represents the search space and defines which nodes can be visited directly from each node.
+
+8. Important Exam Note
+This is a simple Hill Climbing demonstration based on selecting the neighbour with the minimum heuristic. A more guarded version can also compare the selected neighbour's heuristic with the current node's heuristic and stop if there is no improvement.
+
+9. Algorithm in Short
+START
+Set current node and goal node
+While current is not goal:
+    Print current
+    Get neighbours of current
+    If no neighbours:
+        Report goal not found and stop
+    Find heuristic values of neighbours
+    Select neighbour with minimum heuristic
+    Set current to selected neighbour
+Print goal
+STOP
